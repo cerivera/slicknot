@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+        <script src="{{url_for('static', filename='js/vendor/angular.min.js', _external=True)}}"></script>
+        <script src="{{url_for('static', filename='js/vendor/bootstrap.min.js', _external=True)}}"></script>
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/vendor/bootstrap.min.css', external=True)}}" />
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/vendor/bootstrap-responsive.min.css', external=True)}}" />
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>
