@@ -1,8 +1,15 @@
-{% extends "base.html" %}
-{% block title %}Index{% endblock %}
-{% block content %}
-    <h1>Index</h1>
-    <p class="important">
-      Welcome on my awesome homepage.
-    </p>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+        <script src="{{url_for('static', filename='js/main.js', _external=True)}}"></script>
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main.css', external=True)}}" />
+        {% block head %}{% endblock %}
+    </head>
+    <body ng-app="SlicknotApp">
+        <div class="container">
+            <ui-view></ui-view>
+        </div>
+    </body>
+</html>
