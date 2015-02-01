@@ -5,12 +5,14 @@ import csv
 import StringIO
 import re
 import time
+import redis
 
 CACHE_EXPIRE_SECONDS = 60*60*24
 LOOP_SECONDS = 60*60
 
 
 def fetch_deals(cache):
+    print("Fetching deals")
     response = requests.get(keys.KIMONO_URL)
     _json = json.loads(response.text)
 
@@ -28,6 +30,7 @@ def fetch_deals(cache):
 
 
 def run_queries(cache):
+    print("running queries")
     response = requests.get(keys.QUERIES_URL)
     _csv = csv.reader(StringIO.StringIO(response.text))
     c.next()
