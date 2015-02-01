@@ -42,9 +42,10 @@ def run_queries(cache):
         _regex = re.compile(query, re.IGNORECASE)
         for key in cache.keys():
             if _regex.search(key):
+                print("Matched %s" % key)
                 json_val = json.loads(cache.get(key))
                 if email not in json_val['notified']:
-                    print("Notifying")
+                    print("Notifying %s" % email)
                     # TODO Send notification email
                     json_val['notified'].append(email)
                     cache.setex(key, json.dumps(json_val), cache.ttl(key))
