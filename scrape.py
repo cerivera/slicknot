@@ -33,9 +33,10 @@ def run_queries(cache):
     print("running queries")
     response = requests.get(keys.QUERIES_URL)
     _csv = csv.reader(StringIO.StringIO(response.text))
-    c.next()
+    _csv.next()
     count = 0
-    for row in c:
+    for row in _csv:
+        print(row)
         email = row[0].strip()
         query = row[1].strip()
         _regex = re.compile(query)
