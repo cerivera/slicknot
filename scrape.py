@@ -11,8 +11,11 @@ import mandrill
 CACHE_EXPIRE_SECONDS = 60*60*24
 LOOP_SECONDS = 60*60
 
+redis_client = redis.Redis(host=keys.REDIS_HOST, port=keys.REDIS_PORT, db=0)
+mandrill_client = mandrill.Mandrill(keys.MANDRILL_API_KEY) 
 
-def fetch_deals(cache):
+
+def fetch_deals():
     response = requests.get(keys.KIMONO_URL)
     _json = json.loads(response.text)
 
@@ -20,36 +23,47 @@ def fetch_deals(cache):
         text = deal['fp_titles']['text'].strip()
         link = deal['fp_titles']['href'].strip()
 
-        if cache.exists(text):
-            cache.expire(text, CACHE_EXPIRE_SECONDS) 
+        if redis_client.exists(text):
+            redis_client.expire(text, CACHE_EXPIRE_SECONDS) 
         else:
-            cache.setex(text, json.dumps({
+            redis_client.setex(text, json.dumps({
                 'link': link, 
                 'notified': []
             }), CACHE_EXPIRE_SECONDS)
 
 
-def run_queries(cache):
+def run_queries():
     response = requests.get(keys.QUERIES_URL)
     _csv = csv.reader(StringIO.StringIO(response.text))
-    _csv.next()
     for row in _csv:
         query = row[0].strip()
         _regex = re.compile(query, re.IGNORECASE)
-        for key in cache.keys():
+        for key in redis_client.keys():
             if _regex.search(key):
-                json_val = json.loads(cache.get(key))
+                json_val = json.loads(redis_client.get(key))
                 if keys.NOTIFICATION_EMAIL not in json_val['notified']:
-                    # TODO Send notification email
+                    send_deal_notification(NOTIFICATION_EMAIL, key, json_val['link'])
                     json_val['notified'].append(keys.NOTIFICATION_EMAIL)
-                    cache.setex(key, json.dumps(json_val), cache.ttl(key))
+                    redis_client.setex(key, json.dumps(json_val), redis_client.ttl(key))
+
+def send_deal_notification(email, title, link):
+    print("Notifying about '%s'" % title)
+    message = {
+     'from_email': 'rivera.utx@gmail.com',
+     'from_name': 'Slicknot',
+     'html': '<p>%s</p><p><a href="%s">%s</a></p>' % (title, link, link),
+     'subject': title,
+     'to': [{'email': email,
+             'name': 'Carlos',
+             'type': 'to'}]}
+
+    result = mandrill_client.messages.send(message=message)
+    print(result)
 
 
 if __name__ == '__main__':
-    cache = redis.Redis(host=keys.REDIS_HOST, port=keys.REDIS_PORT, db=0)
-
     while True:
-        deals = fetch_deals(cache)
-        queries = run_queries(cache)
+        deals = fetch_deals()
+        queries = run_queries()
         time.sleep(LOOP_SECONDS)
 
