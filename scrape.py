@@ -16,6 +16,7 @@ mandrill_client = mandrill.Mandrill(keys.MANDRILL_API_KEY)
 
 
 def fetch_deals():
+    print("Fetching deals")
     response = requests.get(keys.KIMONO_URL)
     _json = json.loads(response.text)
 
@@ -31,8 +32,11 @@ def fetch_deals():
                 'notified': []
             }), CACHE_EXPIRE_SECONDS)
 
+    print("Done fetching deals")
+
 
 def run_queries():
+    print ("Running queries")
     response = requests.get(keys.QUERIES_URL)
     _csv = csv.reader(StringIO.StringIO(response.text))
     for row in _csv:
@@ -40,11 +44,14 @@ def run_queries():
         _regex = re.compile(query, re.IGNORECASE)
         for key in redis_client.keys():
             if _regex.search(key):
+                print("Match found :%s" % key)
                 json_val = json.loads(redis_client.get(key))
                 if keys.NOTIFICATION_EMAIL not in json_val['notified']:
-                    send_deal_notification(NOTIFICATION_EMAIL, key, json_val['link'])
+                    send_deal_notification(keys.NOTIFICATION_EMAIL, key, json_val['link'])
                     json_val['notified'].append(keys.NOTIFICATION_EMAIL)
                     redis_client.setex(key, json.dumps(json_val), redis_client.ttl(key))
+
+    print("Done running queries")
 
 def send_deal_notification(email, title, link):
     print("Notifying about '%s'" % title)
