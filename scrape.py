@@ -36,6 +36,7 @@ def fetch_deals():
 
 def run_queries():
     print ("Running queries")
+    pending_deal_notifications = []
     response = requests.get(keys.QUERIES_URL)
     _csv = csv.reader(StringIO.StringIO(response.text))
     for row in _csv:
@@ -45,18 +46,27 @@ def run_queries():
             if _regex.search(key):
                 json_val = json.loads(redis_client.get(key))
                 if keys.NOTIFICATION_EMAIL not in json_val['notified']:
-                    send_deal_notification(keys.NOTIFICATION_EMAIL, key, json_val['link'])
+                    pending_deal_notifications.append({
+                        'title': key,
+                        'link': json_val['link']
+                    })
                     json_val['notified'].append(keys.NOTIFICATION_EMAIL)
                     redis_client.setex(key, json.dumps(json_val), redis_client.ttl(key))
 
+    html = ''
+    for deal in pending_deal_notifications:
+        html += '<p>%s</p><p>%s</p><br /><br />' % (deal['title'], deal['link'])
 
-def send_deal_notification(email, title, link):
+    send_email(keys.NOTIFICATION_EMAIL, html)
+
+
+def send_email(email, html):
     print("Notifying about '%s'" % title)
     message = {
      'from_email': 'rivera.utx@gmail.com',
      'from_name': 'Slicknot',
-     'html': '<p>%s</p><p><a href="%s">%s</a></p>' % (title, link, link),
-     'subject': title,
+     'html': html,
+     'subject': 'Deals',
      'to': [{'email': email,
              'name': 'Carlos',
              'type': 'to'}]}
