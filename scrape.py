@@ -61,7 +61,6 @@ def run_queries():
 
 
 def send_email(email, html):
-    print("Notifying about '%s'" % title)
     message = {
      'from_email': 'rivera.utx@gmail.com',
      'from_name': 'Slicknot',
