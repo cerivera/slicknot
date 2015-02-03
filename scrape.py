@@ -53,11 +53,13 @@ def run_queries():
                     json_val['notified'].append(keys.NOTIFICATION_EMAIL)
                     redis_client.setex(key, json.dumps(json_val), redis_client.ttl(key))
 
-    html = ''
-    for deal in pending_deal_notifications:
-        html += '<p>%s</p><p>%s</p><br /><br />' % (deal['title'], deal['link'])
 
-    send_email(keys.NOTIFICATION_EMAIL, html)
+    if len(pending_deal_notifications) > 0:
+        html = ''
+        for deal in pending_deal_notifications:
+            html += '<p>%s</p><p>%s</p><br /><br />' % (deal['title'], deal['link'])
+
+        send_email(keys.NOTIFICATION_EMAIL, html)
 
 
 def send_email(email, html):
