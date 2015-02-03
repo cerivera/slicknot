@@ -55,14 +55,14 @@ def run_queries():
 
 
     if len(pending_deal_notifications) > 0:
-        html = ''
-        for deal in pending_deal_notifications:
-            html += '<p>%s</p><p>%s</p><br /><br />' % (deal['title'], deal['link'])
-
-        send_email(keys.NOTIFICATION_EMAIL, html)
+        send_email(keys.NOTIFICATION_EMAIL, pending_deal_notifications)
 
 
-def send_email(email, html):
+def send_deals_email(email, deals=[]):
+    html = ''
+    for deal in deals:
+        html += '<p>%s</p><p>%s</p><br /><br />' % (deal['title'], deal['link'])
+
     message = {
      'from_email': 'rivera.utx@gmail.com',
      'from_name': 'Slicknot',
