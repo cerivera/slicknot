@@ -55,7 +55,7 @@ def run_queries():
 
 
     if len(pending_deal_notifications) > 0:
-        send_email(keys.NOTIFICATION_EMAIL, pending_deal_notifications)
+        send_deals_email(keys.NOTIFICATION_EMAIL, pending_deal_notifications)
 
 
 def send_deals_email(email, deals=[]):
