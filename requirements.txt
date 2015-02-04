@@ -9,7 +9,6 @@ Mako==1.0.1
 mandrill==1.0.57
 MarkupSafe==0.23
 paramiko==1.15.2
-psycopg2==2.5.4
 pycrypto==2.6.1
 redis==2.10.3
 requests==2.5.1

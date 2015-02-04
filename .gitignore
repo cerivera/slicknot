@@ -6,3 +6,4 @@ include
 keys.py
 .idea
 nohup.out
+local
