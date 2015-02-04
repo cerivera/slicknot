@@ -3,3 +3,6 @@
 bin
 lib
 include
+keys.py
+.idea
+nohup.out
