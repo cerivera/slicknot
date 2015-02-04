@@ -3,7 +3,7 @@
 bin
 lib
 include
-keys.py
+keys
 .idea
 nohup.out
 local
