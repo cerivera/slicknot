@@ -2,7 +2,7 @@ import os, sys
 
 PROJECT_DIR = '/home/vagrant/slicknot'
 
-activate = os.path.join(PROJECT_DIR, 'bin', 'activate.py')
+activate_this = os.path.join(PROJECT_DIR, 'bin', 'activate_this.py')
 
 execfile(activate, dict(__file__=activate))
 
