@@ -1,7 +1,7 @@
 from fabric.api import env, run, cd
 
 USERNAME = 'ubuntu'
-SERVER = '54.153.66.189'
+SERVER = '54.153.81.57'
 APP_NAME = 'slicknot'
 PROJECT_DIR = '/www/%s' % (APP_NAME)
 WSGI_SCRIPT = 'application.wsgi'
