@@ -1,16 +1,25 @@
-from fabric.api import env, run, cd
+from __future__ import with_statement
+from fabric.api import *
+from contextlib import contextmanager as _contextmanager
 
-USERNAME = 'ubuntu'
-SERVER = '54.153.81.57'
-APP_NAME = 'slicknot'
-PROJECT_DIR = '/www/%s' % (APP_NAME)
 WSGI_SCRIPT = 'application.wsgi'
+PROJECT_DIR = '/www/slicknot'
 
-env.hosts = ["%s@%s" % (USERNAME, SERVER)]
+env.hosts = ['54.153.81.57']
+env.user = 'ubuntu'
+env.forward_agent = True
+env.keyfile = ['%s/keys/Saas2.pem' % (PROJECT_DIR)]
+env.directory = PROJECT_DIR
+env.activate = 'source %s/bin/activate' % PROJECT_DIR
+
+@_contextmanager
+def virtualenv():
+    with cd(env.directory):
+        with prefix(env.activate):
+            yield
 
 def deploy():
-    with cd(PROJECT_DIR):
+    with virtualenv():
         run('git pull')
-        run('bin source/activate')
         run('pip install -r requirements.txt')
         run('touch %s' % WSGI_SCRIPT)
