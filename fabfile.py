@@ -8,7 +8,7 @@ PROJECT_DIR = '/www/slicknot'
 env.hosts = ['54.153.81.57']
 env.user = 'ubuntu'
 env.forward_agent = True
-env.keyfile = ['%s/keys/Saas2.pem' % (PROJECT_DIR)]
+env.keyfile = ['%s/secrets/Saas2.pem' % (PROJECT_DIR)]
 env.directory = PROJECT_DIR
 env.activate = 'source %s/bin/activate' % PROJECT_DIR
 

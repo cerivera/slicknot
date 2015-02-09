@@ -1,0 +1,6 @@
+REDIS_HOST = 'localhost'
+REDIS_PORT = '6379'
+MANDRILL_API_KEY = 'xtmDrnGEtCALiXvcIFA5Uw'
+KIMONO_ENDPOINT = 'https://www.kimonolabs.com/api/6htta1k8?apikey=yMslDnCVP4I9LZDZg25U1O29zwCvtGrR'
+CSV_ENDPOINT = 'https://dl.dropboxusercontent.com/u/7156802/apps/slicknot.csv'
+NOTIFICATION_EMAIL = 'rivera.utx@gmail.com'
