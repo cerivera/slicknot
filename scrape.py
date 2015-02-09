@@ -36,7 +36,7 @@ def fetch_deals():
 def run_queries():
     print ("Running queries")
     pending_deal_notifications = []
-    response = requests.get(settings.QUERIES_ENDPOINT)
+    response = requests.get(settings.CSV_ENDPOINT)
     _csv = csv.reader(StringIO.StringIO(response.text))
     for row in _csv:
         query = row[0].strip()
