@@ -41,7 +41,7 @@ def run_queries():
     for row in _csv:
         query = row[0].strip()
         _regex = re.compile(query, re.IGNORECASE)
-        for key in redis_client.settings():
+        for key in redis_client.keys():
             if _regex.search(key):
                 json_val = json.loads(redis_client.get(key))
                 if settings.NOTIFICATION_EMAIL not in json_val['notified']:
