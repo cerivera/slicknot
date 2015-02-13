@@ -23,13 +23,15 @@ def fetch_deals(kimono_endpoint):
     for deal in _json['results']['collection1']:
         text = deal['title']['text'].strip()
         link = deal['title']['href'].strip()
+        price = deal.get('price', {}).get('text', '').strip()
 
         if redis_client.exists(text):
             redis_client.expire(text, CACHE_EXPIRE_SECONDS) 
         else:
             redis_client.setex(text, json.dumps({
                 'link': link, 
-                'notified': []
+                'notified': [],
+                'price': price
             }), CACHE_EXPIRE_SECONDS)
 
 
@@ -47,7 +49,8 @@ def run_queries(csv_endpoint):
                 if settings.NOTIFICATION_EMAIL not in json_val['notified']:
                     pending_deal_notifications.append({
                         'title': key,
-                        'link': json_val['link']
+                        'link': json_val['link'],
+                        'price': json_val['price']
                     })
                     json_val['notified'].append(settings.NOTIFICATION_EMAIL)
                     redis_client.setex(key, json.dumps(json_val), redis_client.ttl(key))
@@ -56,7 +59,7 @@ def run_queries(csv_endpoint):
     if len(pending_deal_notifications) > 0:
         html = ''
         for deal in pending_deal_notifications:
-            html += '<p>%s</p><p>%s</p><br /><br />' % (deal['title'], deal['link'])
+            html += '<p>%s - %s</p><p>%s</p><br />' % (deal['title'], deal['price'], deal['link'])
 
         send_email(settings.NOTIFICATION_EMAIL, html)
 
