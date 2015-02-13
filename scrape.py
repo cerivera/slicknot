@@ -15,14 +15,14 @@ mandrill_client = mandrill.Mandrill(settings.MANDRILL_API_KEY)
 
 
 # TODO Don't fetch if you've already processed the latest results
-def fetch_deals():
+def fetch_deals(kimono_endpoint):
     print("Fetching deals")
-    response = requests.get(settings.KIMONO_ENDPOINT)
+    response = requests.get(kimono_endpoint)
     _json = json.loads(response.text)
 
     for deal in _json['results']['collection1']:
-        text = deal['fp_titles']['text'].strip()
-        link = deal['fp_titles']['href'].strip()
+        text = deal['title']['text'].strip()
+        link = deal['title']['href'].strip()
 
         if redis_client.exists(text):
             redis_client.expire(text, CACHE_EXPIRE_SECONDS) 
@@ -33,10 +33,10 @@ def fetch_deals():
             }), CACHE_EXPIRE_SECONDS)
 
 
-def run_queries():
+def run_queries(csv_endpoint):
     print ("Running queries")
     pending_deal_notifications = []
-    response = requests.get(settings.CSV_ENDPOINT)
+    response = requests.get(csv_endpoint)
     _csv = csv.reader(StringIO.StringIO(response.text))
     for row in _csv:
         query = row[0].strip()
@@ -76,6 +76,7 @@ def send_email(email, html):
 
 
 if __name__ == '__main__':
-    fetch_deals()
-    run_queries()
+    for endpoint in settings.ENDPOINTS:
+        fetch_deals(endpoint['api'])
+        run_queries(endpoint['csv'])
 
