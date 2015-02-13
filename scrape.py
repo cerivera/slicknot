@@ -23,7 +23,7 @@ def fetch_deals(kimono_endpoint):
     for deal in _json['results']['collection1']:
         text = deal['title']['text'].strip()
         link = deal['title']['href'].strip()
-        price = deal.get('price', {}).get('text', '').strip()
+        price = deal['price']['text'].strip()
 
         if redis_client.exists(text):
             redis_client.expire(text, CACHE_EXPIRE_SECONDS) 
