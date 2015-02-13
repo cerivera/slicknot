@@ -77,6 +77,7 @@ def send_email(email, html):
 
 if __name__ == '__main__':
     for endpoint in settings.ENDPOINTS:
-        fetch_deals(endpoint['api'])
-        run_queries(endpoint['csv'])
+        if endpoint['status']:
+            fetch_deals(endpoint['api'])
+            run_queries(endpoint['csv'])
 
