@@ -16,7 +16,7 @@ mandrill_client = mandrill.Mandrill(settings.MANDRILL_API_KEY)
 
 # TODO Don't fetch if you've already processed the latest results
 def fetch_deals(kimono_endpoint):
-    print("Fetching deals")
+    print("Fetching deals: %s" % kimono_endpoint)
     response = requests.get(kimono_endpoint)
     _json = json.loads(response.text)
 
