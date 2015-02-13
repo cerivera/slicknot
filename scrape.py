@@ -37,7 +37,7 @@ def fetch_deals(kimono_endpoint):
 
 def run_queries(csv_endpoint):
     print ("Running queries")
-    pending_deal_notifications = []
+    deals = []
     response = requests.get(csv_endpoint)
     _csv = csv.reader(StringIO.StringIO(response.text))
     for row in _csv:
@@ -47,7 +47,7 @@ def run_queries(csv_endpoint):
             if _regex.search(key):
                 json_val = json.loads(redis_client.get(key))
                 if settings.NOTIFICATION_EMAIL not in json_val['notified']:
-                    pending_deal_notifications.append({
+                    deals.append({
                         'title': key,
                         'link': json_val['link'],
                         'price': json_val['price']
@@ -55,13 +55,9 @@ def run_queries(csv_endpoint):
                     json_val['notified'].append(settings.NOTIFICATION_EMAIL)
                     redis_client.setex(key, json.dumps(json_val), redis_client.ttl(key))
 
+    return deals
 
-    if len(pending_deal_notifications) > 0:
-        html = ''
-        for deal in pending_deal_notifications:
-            html += '<p>%s - %s</p><p>%s</p><br />' % (deal['title'], deal['price'], deal['link'])
 
-        send_email(settings.NOTIFICATION_EMAIL, html)
 
 
 def send_email(email, html):
@@ -79,8 +75,16 @@ def send_email(email, html):
 
 
 if __name__ == '__main__':
+
+    pending_deal_notifications = []
     for endpoint in settings.ENDPOINTS:
         if endpoint['status']:
             fetch_deals(endpoint['api'])
-            run_queries(endpoint['csv'])
+            pending_deal_notifications += run_queries(endpoint['csv'])
 
+    if len(pending_deal_notifications) > 0:
+        html = ''
+        for deal in pending_deal_notifications:
+            html += '<p>%s - %s</p><p>%s</p><br />' % (deal['title'], deal['price'], deal['link'])
+
+        send_email(settings.NOTIFICATION_EMAIL, html)
