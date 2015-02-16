@@ -5,7 +5,7 @@ MANDRILL_API_KEY = 'xtmDrnGEtCALiXvcIFA5Uw'
 ENDPOINTS = [
     {
         # Slickdeals - Front Page
-        'status': 1,
+        'status': 0,
         'api': 'https://www.kimonolabs.com/api/6htta1k8?apikey=yMslDnCVP4I9LZDZg25U1O29zwCvtGrR',
         'csv': 'https://dl.dropboxusercontent.com/u/7156802/apps/slickdeals.csv'
     },
