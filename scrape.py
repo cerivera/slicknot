@@ -20,7 +20,10 @@ def fetch_deals(kimono_endpoint):
     response = requests.get(kimono_endpoint)
     _json = json.loads(response.text)
 
-    for deal in _json['results']['collection1']:
+    
+    collection = _json['results']['collection1'] if 'collection1' in _json['results'] else _json['results']['collection2']
+
+    for deal in collection:
         text = deal['title']['text'].strip()
         link = deal['title']['href'].strip()
         price = deal['price']['text'].strip() if type(deal['price']) is dict else deal['price'].strip()
