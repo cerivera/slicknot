@@ -17,7 +17,7 @@ ENDPOINTS = [
     },
     {
         # OfferUp - Tools
-        'status': 0,
+        'status': 1,
         'api': 'https://www.kimonolabs.com/api/json/25nkauhs?apikey=yMslDnCVP4I9LZDZg25U1O29zwCvtGrR',
         'csv': 'https://dl.dropboxusercontent.com/u/7156802/apps/tools.csv'
     },
@@ -59,7 +59,7 @@ ENDPOINTS = [
     },
     {
         # Craigslist - Tools
-        'status': 0,
+        'status': 1,
         'api': 'https://www.kimonolabs.com/api/json/3biahcyu?apikey=yMslDnCVP4I9LZDZg25U1O29zwCvtGrR',
         'csv': 'https://dl.dropboxusercontent.com/u/7156802/apps/tools.csv'
     }
