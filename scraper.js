@@ -3,6 +3,27 @@ var casper = require('casper').create({
     logLevel: 'debug'
 });
 
+function getParsedPrice(val) {
+    if (val == undefined || val == null) {
+        return 'N/A';
+    }
+
+    var parsedVal = yankFloatFromStr(val);
+    return parsedVal == null ? val : parsedVal;
+}
+
+function yankFloatFromStr(val) {
+    var strippedVal = val.replace(/[^\d\.]/g, '');
+    if (strippedVal) {
+        try {
+            return parseFloat(strippedVal);
+        } catch(err) {
+            return null;
+        }
+    }
+    return null;
+}
+
 var deals = [];
 
 casper.start('http://slickdeals.net', function() {
@@ -14,13 +35,13 @@ casper.start('http://slickdeals.net', function() {
 
             var titleLink = e.querySelector('strong a');
             if (titleLink) {
-                deal.title = e.textContent;
-                deal.link = e.href;
+                deal.title = titleLink.textContent;
+                deal.link = titleLink.href;
             };
 
             var priceElm = e.querySelector('strong b');
             if (priceElm) {
-                deal.price = e.textContent;
+                deal.price = priceElm.textContent;
             }
 
             return deal;
@@ -61,47 +82,10 @@ casper.start('http://slickdeals.net', function() {
     deals = deals.concat(newDeals);
 });
 
-// REI Outlet Cycles
-casper.thenOpen('http://www.rei.com/outlet/c/bikes?ir=category%3Abikes&pagesize=90&sort=percentageoff&outlet=true&r=deals%3AOutlet%20Products%7CClearance%20Products%3Bcategory%3Acycling%7Cbikes%3Bgender%3AUnisex%7CWomen%27s%7CMen%27s&page=1&version=v2&rank=test-version-2');
-
-casper.waitFor(function check() {
-    return this.evaluate(function() {
-        return document.querySelectorAll('.product-details').length > 10;
-    });
-}, function then() {
-    function _getDeals() {
-        var _deals = document.querySelectorAll('.product-details');
-        return Array.prototype.map(_deals, function(e) {
-            var deal = {};
-
-            var linkElm = e.querySelector('.result-product-page-link');
-            if (linkElm) {
-                deal.link = linkElm.href;
-            }
-
-            var titleElm = e.querySelector('.result-product-page-link .result-title');
-            if (titleElm) {
-                deal.title = titleElm.textContent;
-            }
-
-            var priceElm = e.querySelector('.result-product-page-link li.sale-price');
-            if (priceElm) {
-                deal.price = priceElm.textContent;
-            }
-
-            return deal;
-        });
-    }
-
-    deals = deals.concat(this.evaluate(_getDeals));
-
-});
-
-
 casper.run(function() {
     this.echo(deals.length + ' deals found:');
     for (var i = 0; i < deals.length; i++) {
-        this.echo(deals[i].title + '\n');
+        this.echo(deals[i].title + " : " + getParsedPrice(deals[i].price) + '\n');
     }
     this.exit();
 });
